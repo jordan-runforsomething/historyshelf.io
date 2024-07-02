@@ -5,6 +5,21 @@ import { redirect } from "next/navigation"
 
 import { createClient } from "./server"
 
+// Convert Supabase Error messages into user-readable messages
+// https://supabase.com/docs/reference/javascript/auth-error-codes
+const SIGNUP_ERROR_MESSAGES = {
+  email_exists:
+    "An account already exists with this email address. If this is your email, please login instead.",
+  email_not_confirmed:
+    "This email address is pending confirmation. Please click the link in the email we just sent you to get started",
+}
+
+export type HSAuthResponse = {
+  success: boolean
+  error?: string
+  message: string
+}
+
 export async function login(formData: FormData) {
   const supabase = createClient()
 
@@ -43,9 +58,22 @@ export async function signup(formData: FormData) {
   if (response.error) {
     console.log({ data })
     console.log(response.error)
-    // redirect("/error")
+    let message = "An unexpected error occured, please try again"
+    if (response.error.message in SIGNUP_ERROR_MESSAGES) {
+      message = SIGNUP_ERROR_MESSAGES[response.error.message]
+    } else {
+      // TODO: Log error with Sentry; could be backend thing
+    }
+    return {
+      success: false,
+      error: response.error.code,
+      message,
+    }
   }
-
-  revalidatePath("/", "layout")
-  redirect("/")
+  console.log("Success")
+  return {
+    success: true,
+    message:
+      "Welcome! Check your email for a confirmation link to get started!",
+  }
 }

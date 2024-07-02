@@ -1,4 +1,5 @@
-import HSLogin from "./login/login"
+import HSLogin from "./auth/login"
+import styles from "./page.module.scss"
 import { createClient } from "@/utils/supabase/server"
 
 export default async function Home() {
@@ -8,12 +9,22 @@ export default async function Home() {
   const authenticated = !!data?.user
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-24">
-      <h1>HistoryShelf.io</h1>
-      <p>Get started by signing in or creating an account:</p>
-      <p>Authenticated: {authenticated ? "true" : "false"}</p>
-      <p>{data?.user?.id}</p>
-      <HSLogin />
+    <main
+      className={`flex min-h-screen flex-row items-center justify-between p-12 ${styles.HSLanding}`}
+    >
+      <div className="product-description bg-paper p-6 rounded-sm w-2/5">
+        <h1>HistoryShelf.io</h1>
+        <p>
+          Read, Explore, and Share History with fellow geeks and history buffs
+        </p>
+      </div>
+
+      <div className="login-container bg-paper p-6 text-center rounded-sm w-2/5">
+        <p className="mb-3">Create your free account to get started</p>
+        {/* <p>Authenticated: {authenticated ? "true" : "false"}</p> */}
+        {/* <p>{data?.user?.id}</p> */}
+        <HSLogin />
+      </div>
     </main>
   )
 }
