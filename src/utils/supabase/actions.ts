@@ -14,13 +14,12 @@ const SIGNUP_ERROR_MESSAGES = {
     "This email address is pending confirmation. Please click the link in the email we just sent you to get started",
 }
 
-export type HSAuthResponse = {
-  success: boolean
+export type HSAuthFormState = {
   error?: string
-  message: string
+  message?: string
 }
 
-export async function login(formData: FormData) {
+export async function login(prevState: HSAuthFormState, formData: FormData) {
   const supabase = createClient()
 
   // type-casting here for convenience
@@ -34,14 +33,17 @@ export async function login(formData: FormData) {
 
   if (error) {
     console.log(error)
-    redirect("/error")
+    return {
+      error: error.code,
+      message:
+        SIGNUP_ERROR_MESSAGES[error.code || ""] ?? "Invalid username/password",
+    }
   }
-
   revalidatePath("/", "layout")
-  redirect("/")
+  redirect("/onboard")
 }
 
-export async function signup(formData: FormData) {
+export async function signup(prevState: HSAuthFormState, formData: FormData) {
   const supabase = createClient()
 
   // type-casting here for convenience
@@ -52,8 +54,6 @@ export async function signup(formData: FormData) {
   }
 
   const response = await supabase.auth.signUp(data)
-  console.log(response)
-  console.log(JSON.stringify(response))
 
   if (response.error) {
     console.log({ data })
@@ -65,14 +65,23 @@ export async function signup(formData: FormData) {
       // TODO: Log error with Sentry; could be backend thing
     }
     return {
-      success: false,
       error: response.error.code,
       message,
     }
+  } else if (
+    response.data.user?.email === data.email &&
+    !response.data.user.identities?.length
+  ) {
+    // Attempting to register as a user who already exists and is confirmed
+    // For some reason Supabase does not return this as an error.
+    return {
+      message: SIGNUP_ERROR_MESSAGES.email_exists,
+      error: "email_exists",
+    }
   }
-  console.log("Success")
+
   return {
-    success: true,
+    error: "email_not_confirmed",
     message:
       "Welcome! Check your email for a confirmation link to get started!",
   }

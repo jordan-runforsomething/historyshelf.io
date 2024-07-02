@@ -1,41 +1,52 @@
 "use client"
-import React, { useCallback, useState } from "react"
-import { Input } from "@nextui-org/input"
+import { login, signup } from "@/utils/supabase/actions"
 import { Button } from "@nextui-org/button"
-import { HSAuthResponse, login, signup } from "@/utils/supabase/actions"
-import { MdEmail, MdPassword } from "react-icons/md"
+import { Input } from "@nextui-org/input"
+import { useState } from "react"
+import { useFormState } from "react-dom"
 import { BsPersonRaisedHand } from "react-icons/bs"
+import { FaCircleCheck } from "react-icons/fa6"
+import { MdEmail, MdPassword } from "react-icons/md"
 
 type LoginProps = {}
 
 export default function HSLogin(props: LoginProps) {
-  const [authResponse, setAuthResponse] = useState<HSAuthResponse>()
   const [mode, setMode] = useState<"login" | "signup">("signup")
-
-  // Our callbacks for login and registration
-  const doSignup = useCallback(async (fd: FormData) => {
-    const response = await signup(fd)
-    setAuthResponse(response)
-  }, [])
-
-  const login = useCallback(async (fd: FormData) => {
-    const response = await login(fd)
-    setAuthResponse(response)
-  }, [])
+  const [loginState, loginAction] = useFormState(login, {
+    message: "",
+    error: "",
+  })
+  const [signupState, signupAction] = useFormState(signup, {
+    message: "",
+    error: "",
+  })
 
   // Helper to render alert with auth response
+  const state = mode === "login" ? loginState : signupState
   const renderAuthResponse = () => {
-    if (!authResponse) return
+    if (!state.message) return
     return (
-      <div className="auth-response p-4 bg-white border border-4">
-        <p>{authResponse.message}</p>
+      <div className="auth-response p-4 bg-white border border-4 flex-row justify-center">
+        <p>{state.message}</p>
+        {state.error === "email_not_confirmed" && (
+          <Button variant="ghost" className="mt-2">
+            Resend Email
+          </Button>
+        )}
       </div>
     )
   }
 
+  const toggleMode = () => {
+    setMode(mode === "login" ? "signup" : "login")
+  }
+
+  const actionCopy = mode === "login" ? "Login" : "Get Started"
+  const action = mode === "login" ? loginAction : signupAction
+
   return (
     <div>
-      <form className="flex flex-col gap-6">
+      <form className="flex flex-col gap-6" action={action}>
         <div className="flex gap-2">
           <Input
             color="primary"
@@ -54,27 +65,32 @@ export default function HSLogin(props: LoginProps) {
             startContent={<MdPassword />}
           />
         </div>
-        <Input
-          color="primary"
-          name="displayName"
-          type="text"
-          label="Display Name"
-          placeholder="AryaStark"
-          maxLength={15}
-          startContent={<BsPersonRaisedHand />}
-        />
-        <Button color="primary" type="submit" formAction={doSignup}>
-          Get Started
+        {mode === "signup" && (
+          <Input
+            color="primary"
+            name="displayName"
+            type="text"
+            label="Display Name"
+            placeholder="AryaStark"
+            maxLength={15}
+            startContent={<BsPersonRaisedHand />}
+          />
+        )}
+        <Button color="primary" type="submit" formAction={action}>
+          {actionCopy}
+          <FaCircleCheck />
         </Button>
         {renderAuthResponse()}
         <hr />
         <div className="flex items-center justify-around">
-          <p>Already have an account?</p>
+          {mode === "signup" && <p>Already have an account?</p>}
+          {mode === "login" && <p>New to HistoryShelf?</p>}
           <Button
             variant="ghost"
-            onClick={() => setMode(mode === "login" ? "signup" : "login")}
+            isDisabled={state.error === "email_not_confirmed"}
+            onClick={toggleMode}
           >
-            {mode === "login" ? "Signup" : "Login"}
+            {mode === "login" ? "Create an Account" : "Login"}
           </Button>
         </div>
       </form>
