@@ -35,6 +35,7 @@ export async function login(prevState: HSAuthFormState, formData: FormData) {
     console.log(error)
     return {
       error: error.code,
+      email: data.email,
       message:
         SIGNUP_ERROR_MESSAGES[error.code || ""] ?? "Invalid username/password",
     }
@@ -77,12 +78,14 @@ export async function signup(prevState: HSAuthFormState, formData: FormData) {
     return {
       message: SIGNUP_ERROR_MESSAGES.email_exists,
       error: "email_exists",
+      email: data.email,
     }
   }
 
   revalidatePath("/", "layout")
   return {
     error: "email_not_confirmed",
+    email: data.email,
     message:
       "Welcome! Check your email for a confirmation link to get started!",
   }

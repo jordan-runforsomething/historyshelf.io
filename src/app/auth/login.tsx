@@ -7,46 +7,79 @@ import { useFormState } from "react-dom"
 import { BsPersonRaisedHand } from "react-icons/bs"
 import { FaCircleCheck } from "react-icons/fa6"
 import { MdEmail, MdPassword } from "react-icons/md"
+import { createClient } from "@/utils/supabase/client"
 
-type LoginProps = {}
+// Allow resending signup email at most every 60 seconds
+const RESEND_SIGNUP_EMAIL_THRESHOLD = 60 * 1000
 
-export default function HSLogin(props: LoginProps) {
+export default function HSLogin() {
   const [mode, setMode] = useState<"login" | "signup">("signup")
   const [loginState, loginAction] = useFormState(login, {
     message: "",
     error: "",
+    email: "",
   })
   const [signupState, signupAction] = useFormState(signup, {
     message: "",
     error: "",
+    email: "",
   })
+  const [resendingSignup, setResendingSignup] = useState(false)
+  const [resentEmail, setResentEmail] = useState(false)
+  const client = createClient()
+  const state = mode === "login" ? loginState : signupState
+
+  // Resend signup email.
+  const resendSignup = async () => {
+    if (!state.email || resentEmail) return
+    setResendingSignup(true)
+    try {
+      await client.auth.resend({
+        type: "signup",
+        email: state.email,
+      })
+    } finally {
+      setResendingSignup(false)
+      setResentEmail(true)
+    }
+  }
 
   // Helper to render alert with auth response
-  const state = mode === "login" ? loginState : signupState
   const renderAuthResponse = () => {
     if (!state.message) return
     return (
       <div className="auth-response p-4 bg-white border border-4 flex-row justify-center">
         <p>{state.message}</p>
-        {state.error === "email_not_confirmed" && (
-          <Button variant="ghost" className="mt-2">
-            Resend Email
+        {state.error === "email_not_confirmed" && state.email && (
+          <Button
+            onClick={resendSignup}
+            isLoading={resendingSignup}
+            variant="ghost"
+            className="mt-2"
+            isDisabled={resentEmail}
+          >
+            {resentEmail ? "Email Re-Sent" : "Resend Email"}
           </Button>
         )}
       </div>
     )
   }
 
+  // Switch between login and signup form
   const toggleMode = () => {
     setMode(mode === "login" ? "signup" : "login")
   }
 
   const actionCopy = mode === "login" ? "Login" : "Get Started"
   const action = mode === "login" ? loginAction : signupAction
+  const shouldRenderLogin = !(
+    state.error === "email_not_confirmed" && state.email
+  )
 
-  return (
-    <div>
-      <form className="flex flex-col gap-6" action={action}>
+  const renderForm = () => {
+    if (!shouldRenderLogin) return
+    return (
+      <>
         <div className="flex gap-2">
           <Input
             color="primary"
@@ -70,8 +103,7 @@ export default function HSLogin(props: LoginProps) {
             color="primary"
             name="displayName"
             type="text"
-            label="Display Name"
-            placeholder="AryaStark"
+            label="Display Name (How others will see you on HistoryShelf)"
             maxLength={15}
             startContent={<BsPersonRaisedHand />}
           />
@@ -80,19 +112,29 @@ export default function HSLogin(props: LoginProps) {
           {actionCopy}
           <FaCircleCheck />
         </Button>
+      </>
+    )
+  }
+
+  return (
+    <div>
+      <form className="flex flex-col gap-6" action={action}>
+        {renderForm()}
         {renderAuthResponse()}
         <hr />
-        <div className="flex items-center justify-around">
-          {mode === "signup" && <p>Already have an account?</p>}
-          {mode === "login" && <p>New to HistoryShelf?</p>}
-          <Button
-            variant="ghost"
-            isDisabled={state.error === "email_not_confirmed"}
-            onClick={toggleMode}
-          >
-            {mode === "login" ? "Create an Account" : "Login"}
-          </Button>
-        </div>
+        {shouldRenderLogin && (
+          <div className="flex items-center justify-around">
+            {mode === "signup" && <p>Already have an account?</p>}
+            {mode === "login" && <p>New to HistoryShelf?</p>}
+            <Button
+              variant="ghost"
+              isDisabled={state.error === "email_not_confirmed"}
+              onClick={toggleMode}
+            >
+              {mode === "login" ? "Create an Account" : "Login"}
+            </Button>
+          </div>
+        )}
       </form>
     </div>
   )
