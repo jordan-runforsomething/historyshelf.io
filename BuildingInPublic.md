@@ -7,4 +7,4 @@
   - Need to attach email. Google Workspace may be best to test with; Sendgrid and Resend have usable hobby plans
   - Gracefully handling all errors that can arise in server action using `useFormStatus`
   - Annoying that we dont get error for someone registering with same email. Catch this and display message.
-  - Logout using client-side code
+  - Logout using client-side code. Has to be in component since layout can't `use client`

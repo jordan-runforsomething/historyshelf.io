@@ -7,21 +7,18 @@ import {
   NavbarItem,
 } from "@nextui-org/react"
 import React, { useCallback } from "react"
-// import { createClient } from "@/utils/supabase/client"
-import { useRouter } from "next/router"
+import LogoutButton from "../auth/logout"
 
 export default function HSAppLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const router = useRouter()
-
   // Log the user out; redirect to home page
   const doLogout = useCallback(async () => {
     // const client = createClient()
     // await client.auth.signOut()
-    router.push("/")
+    // router.push("/")
   }, [])
 
   return (
@@ -30,7 +27,7 @@ export default function HSAppLayout({
         <NavbarBrand>HistoryShelf</NavbarBrand>
         <NavbarContent justify="end">
           <NavbarItem>
-            <Link onClick={doLogout}>Logout</Link>
+            <LogoutButton />
           </NavbarItem>
         </NavbarContent>
       </Navbar>

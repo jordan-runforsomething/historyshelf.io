@@ -40,7 +40,7 @@ export async function login(prevState: HSAuthFormState, formData: FormData) {
     }
   }
   revalidatePath("/", "layout")
-  redirect("/onboard")
+  redirect("/hs/onboard")
 }
 
 export async function signup(prevState: HSAuthFormState, formData: FormData) {
@@ -80,6 +80,7 @@ export async function signup(prevState: HSAuthFormState, formData: FormData) {
     }
   }
 
+  revalidatePath("/", "layout")
   return {
     error: "email_not_confirmed",
     message:
