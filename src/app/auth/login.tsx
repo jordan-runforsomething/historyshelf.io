@@ -9,9 +9,6 @@ import { FaCircleCheck } from "react-icons/fa6"
 import { MdEmail, MdPassword } from "react-icons/md"
 import { createClient } from "@/utils/supabase/client"
 
-// Allow resending signup email at most every 60 seconds
-const RESEND_SIGNUP_EMAIL_THRESHOLD = 60 * 1000
-
 export default function HSLogin() {
   const [mode, setMode] = useState<"login" | "signup">("signup")
   const [loginState, loginAction] = useFormState(login, {
@@ -79,7 +76,7 @@ export default function HSLogin() {
   const renderForm = () => {
     if (!shouldRenderLogin) return
     return (
-      <>
+      <form className="flex flex-col gap-6" action={action}>
         <div className="flex gap-2">
           <Input
             color="primary"
@@ -112,17 +109,17 @@ export default function HSLogin() {
           {actionCopy}
           <FaCircleCheck />
         </Button>
-      </>
+      </form>
     )
   }
 
   return (
     <div>
-      <form className="flex flex-col gap-6" action={action}>
-        {renderForm()}
-        {renderAuthResponse()}
-        <hr />
-        {shouldRenderLogin && (
+      {renderForm()}
+      {renderAuthResponse()}
+      {shouldRenderLogin && (
+        <>
+          <hr />
           <div className="flex items-center justify-around">
             {mode === "signup" && <p>Already have an account?</p>}
             {mode === "login" && <p>New to HistoryShelf?</p>}
@@ -134,8 +131,9 @@ export default function HSLogin() {
               {mode === "login" ? "Create an Account" : "Login"}
             </Button>
           </div>
-        )}
-      </form>
+          <hr />
+        </>
+      )}
     </div>
   )
 }
