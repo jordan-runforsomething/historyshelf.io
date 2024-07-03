@@ -7,10 +7,10 @@ export default async function Onboard() {
   const authenticated = !!data?.user
 
   return (
-    <main>
-      <h1>Onboard!</h1>
+    <div>
+      <h1 className="font-title text-xl">Onboard!</h1>
       <p>{error ? JSON.stringify(error) : ""}</p>
-      <p>{data.user?.email}</p>
-    </main>
+      <p className="font-body">{data.user?.email}</p>
+    </div>
   )
 }

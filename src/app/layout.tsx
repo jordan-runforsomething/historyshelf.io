@@ -1,9 +1,14 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Inter, Spectral } from "next/font/google"
 import { NextUIProvider } from "@nextui-org/react"
 import "./globals.scss"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"], variable: "--font-body" })
+const spectral = Spectral({
+  weight: "600",
+  subsets: ["latin"],
+  variable: "--font-title",
+})
 
 export const metadata: Metadata = {
   title: "Historyshelf.io",
@@ -16,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={`${spectral.variable} ${inter.variable}`}>
+      <body>
         <NextUIProvider>
           <div>{children}</div>
         </NextUIProvider>
