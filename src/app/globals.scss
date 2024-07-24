@@ -36,3 +36,23 @@ h1,h2,h3,h4,h5,h6 {
   background-image: url('/img/groovepaper.png');
   background-repeat: repeat;
 }
+
+.content-container {
+  width: 70vw;
+  min-width: 500px;
+  background: rgba(255,255,255,0.8);
+  padding: 36px 32px;
+  margin: auto;
+  margin-top: 24px;
+  border-radius: 6px;
+}
+.help {
+  color: #666;
+  font-size: 0.8em;
+}
+.vertical-rule {
+  width: 3px;
+  background: #666;
+  height: 100%;
+  margin: 0 8px;
+}

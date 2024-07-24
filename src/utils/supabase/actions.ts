@@ -19,6 +19,12 @@ export type HSAuthFormState = {
   message?: string
 }
 
+/**
+ * Given a Supabase user, get or create a HistoryShelf user
+ * TODO: Complete
+ */
+async function getOrCreateUser() {}
+
 export async function login(prevState: HSAuthFormState, formData: FormData) {
   const supabase = createClient()
 
@@ -41,7 +47,7 @@ export async function login(prevState: HSAuthFormState, formData: FormData) {
     }
   }
   revalidatePath("/", "layout")
-  redirect("/hs/onboard")
+  redirect("/hs/onboard/welcome/")
 }
 
 export async function signup(prevState: HSAuthFormState, formData: FormData) {
@@ -89,4 +95,19 @@ export async function signup(prevState: HSAuthFormState, formData: FormData) {
     message:
       "Welcome! Check your email for a confirmation link to get started!",
   }
+}
+
+export async function uploadFile(file: File, bucket: string, filename = "") {
+  const supabase = createClient()
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .upload(filename || file.name, file)
+
+  // Handle error if upload failed
+  if (error) {
+    console.log("Supabase file upload error")
+    console.log({ error })
+    throw Error("Failed to upload file")
+  }
+  return data
 }
