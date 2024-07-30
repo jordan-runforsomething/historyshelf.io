@@ -56,3 +56,21 @@ h1,h2,h3,h4,h5,h6 {
   height: 100%;
   margin: 0 8px;
 }
+.app-layout-inner {
+  height: 100vh;
+  overflow-y: scroll;
+  position: relative;
+}
+.page-mast {
+  // position: absolute;
+  // top: 0px;
+  // background: white;
+  // z-index: 2;
+  // width: 100%;
+  // padding: 12px;
+  // height: 100px;
+}
+.page-mast h1 {
+  font-size: 68px;
+  opacity: 0.75;
+}

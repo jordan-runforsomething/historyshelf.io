@@ -34,6 +34,7 @@ export type GoodreadsImportState = {
   error?: string
   booksImported?: number
   booksCreated?: number
+  wasFirstImport?: boolean // Just used for populating getting started tour
 }
 
 /**

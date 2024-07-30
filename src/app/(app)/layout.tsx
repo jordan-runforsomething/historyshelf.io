@@ -1,14 +1,5 @@
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  Button,
-  Link,
-  NavbarItem,
-  Divider,
-} from "@nextui-org/react"
+import { Divider, Link } from "@nextui-org/react"
 import React, { useCallback } from "react"
-import LogoutButton from "../auth/logout"
 import styles from "./appLayout.module.scss"
 
 export default function HSAppLayout({
@@ -31,7 +22,7 @@ export default function HSAppLayout({
         <div className="brand text-center">
           <h2>HistoryShelf Logo</h2>
         </div>
-        <div className="links flex flex-col">
+        <div className="links flex flex-col align-end text-right">
           <Link href="/library">
             <p>My Library</p>
           </Link>

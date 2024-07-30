@@ -1,6 +1,7 @@
 import { db } from "@/db"
 import { bookForUser, books } from "../schema/books"
 import { eq } from "drizzle-orm"
+import _ from "lodash"
 
 export async function getBooksForUser(userID: string) {
   const result = await db
@@ -9,5 +10,5 @@ export async function getBooksForUser(userID: string) {
     .innerJoin(bookForUser, eq(books.id, bookForUser.book_id))
     .where(eq(bookForUser.supabase_user_id, userID))
 
-  return result
+  return _.map(result, "book")
 }

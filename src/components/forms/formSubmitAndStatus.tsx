@@ -11,10 +11,12 @@ export type SubmitFormAndStatusProps = {
   submitText?: string
   action?: (payload: FormData) => void
   error?: string
+  isDisabled?: boolean
 }
 export default function SubmitFormAndStatus({
   submitText = "Submit",
   error,
+  isDisabled,
 }: SubmitFormAndStatusProps) {
   const { pending, data, method } = useFormStatus()
 
@@ -29,7 +31,7 @@ export default function SubmitFormAndStatus({
         color="primary"
         type="submit"
         isLoading={pending}
-        isDisabled={pending}
+        isDisabled={pending || isDisabled}
       >
         {submitText}
       </Button>
