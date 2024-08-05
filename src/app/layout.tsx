@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Inter, Spectral } from "next/font/google"
+import { Inter, Spectral, Merienda } from "next/font/google"
 import { NextUIProvider } from "@nextui-org/react"
 import "./globals.scss"
 
@@ -8,6 +8,11 @@ const spectral = Spectral({
   weight: "600",
   subsets: ["latin"],
   variable: "--font-title",
+})
+const merienda = Merienda({
+  weight: "600",
+  subsets: ["latin"],
+  variable: "--font-handwriting",
 })
 
 export const metadata: Metadata = {
@@ -21,7 +26,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${spectral.variable} ${inter.variable}`}>
+    <html
+      lang="en"
+      className={`${spectral.variable} ${merienda.variable} ${inter.variable}`}
+    >
       <body>
         <NextUIProvider>
           <div>{children}</div>

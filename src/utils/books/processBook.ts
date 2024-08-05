@@ -6,10 +6,22 @@
 import { db } from "@/db"
 import { SelectBook, books } from "@/db/schema/books"
 import { createClient } from "@supabase/supabase-js"
+import { configDotenv } from "dotenv"
 import { eq } from "drizzle-orm"
+import { levenshteinEditDistance } from "levenshtein-edit-distance"
+import _ from "lodash"
+
+configDotenv({ path: `.env.${process.env.NODE_ENV ?? "local"}` })
+const GOOGLE_BOOKS_URL = (title: string, author: string) =>
+  `https://www.googleapis.com/books/v1/volumes?q=intitle:${title}+inauthor:${author}&key=${process.env.GOOGLE_BOOKS_API_KEY}`
 
 const OPEN_LIB_URL = (isbn: string) =>
   `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`
+
+const STR_CLOSE_ENOUGH = (a: string, b: string) => {
+  levenshteinEditDistance(a, b) <=
+    Math.round(Math.abs(a.length - b.length) * 0.15)
+}
 
 const BUCKET = "book_covers"
 const MIN_BYTES = 100
@@ -62,7 +74,38 @@ export async function DownloadBookImage(book: SelectBook) {
   }
 }
 
+/** Helper function to get an ISBN using Google Books API and - if that doesn't work - then AI */
+export async function DetermineISBN(book: SelectBook) {
+  // Hepers in case we called for book we already have or can't get ISBN for
+  if (book.isbn) return book.isbn
+  if (book.isbn13) return book.isbn13
+  if (!book.title) return null
+  const url = GOOGLE_BOOKS_URL(book.title, book.author ?? "")
+  const gBooksResponse = await fetch(url)
+  const gBooksData = await gBooksResponse.json()
+  let isbn = ""
+  console.log("Lookup ISBN", book.title)
+  console.log({ url })
+  console.log(gBooksData)
+  for (const item of gBooksData.items) {
+    // Sometimes titles are slightly different. We first check if title and author match exactly.
+    const longTitle = `${item.title} ${item.subtitle}`
+    if ([longTitle, item.title].includes(book.title)) {
+      isbn = _.find(item.industryIdentifiers, (i) =>
+        ["ISBN_13", "ISBN_10"].includes(i.type)
+      )?.identifier
+    }
+    if (isbn) break
+  }
+  return isbn
+}
+
 export async function ProcessBook(book: SelectBook) {
+  if (!book.isbn && !book.isbn13) {
+    console.log("Looking for ISBN", book.title)
+    book.isbn = await DetermineISBN(book)
+    console.log("Resulting ISBN: ", book.isbn)
+  }
   // Todo: Also extract events with AI
   let updatedBook = await DownloadBookImage(book)
   return updatedBook

@@ -1,4 +1,4 @@
-import { Divider, Link } from "@nextui-org/react"
+import { Divider, Link, Image } from "@nextui-org/react"
 import React, { useCallback } from "react"
 import styles from "./appLayout.module.scss"
 
@@ -19,9 +19,7 @@ export default function HSAppLayout({
       <nav
         className={`${styles.sidebarMenu} flex flex-col w-1/5 max-w-64 bg-black/90 text-white`}
       >
-        <div className="brand text-center">
-          <h2>HistoryShelf Logo</h2>
-        </div>
+        <h2 className="text-center text-4xl handwriting mb-8 mt-4">Historio</h2>
         <div className="links flex flex-col align-end text-right">
           <Link href="/library">
             <p>My Library</p>
@@ -37,6 +35,15 @@ export default function HSAppLayout({
           <Link href="/account">
             <p>Account Settings</p>
           </Link>
+        </div>
+        <div className="pt-4 flex justify-center">
+          <div className="w-1/2">
+            <Image
+              src="/img/logo/logo_transparent.png"
+              className="w-full"
+              alt="Historio"
+            />
+          </div>
         </div>
       </nav>
       <div className="bg-white/50 app-layout-inner">{children}</div>

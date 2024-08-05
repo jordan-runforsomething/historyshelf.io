@@ -5,10 +5,12 @@ import goodreadsImportAction, {
 } from "@/utils/books/goodreadsImportAction"
 import {
   Button,
+  Checkbox,
   Modal,
   ModalBody,
   ModalContent,
   ModalHeader,
+  Tooltip,
   useDisclosure,
 } from "@nextui-org/react"
 import Link from "next/link"
@@ -59,6 +61,20 @@ export default function GoodreadsImportModal({
     )
   }
 
+  const onlyReadTooltipContent = (
+    <div className="text-center">
+      <p>
+        If checked, only books on your 'read' list in Goodreads will be
+        imported.
+      </p>
+      <p>
+        Books on your Goodreads lists that have not been marked
+        <br />
+        read will not be imported.
+      </p>
+    </div>
+  )
+
   const renderBody = () => (
     <div className="pb-4">
       <p className="mb-4">
@@ -83,25 +99,30 @@ export default function GoodreadsImportModal({
           </li>
         </ol>
       </div>
-      <div className="pl-8">
-        <form action={uploadAction}>
-          <div className="flex border-4 border-gray-300 rounded-lg p-4 justify-around mt-4 items-center">
-            <div>
-              <p className="help mb-2">Choose a File, then click Submit</p>
-              <input
-                onChange={() => setFileSelected(true)}
-                name="file"
-                type="file"
-                className="mr-6"
-              />
-            </div>
-            <SubmitFormAndStatus
-              isDisabled={!fileSelected}
-              error={uploadState.error}
+      <form action={uploadAction}>
+        <div className="flex border-4 border-gray-300 rounded-lg p-4 justify-around mt-4 items-center">
+          <div>
+            <p className="help mb-2">Choose a File, then click Submit</p>
+            <input
+              onChange={() => setFileSelected(true)}
+              name="file"
+              type="file"
+              className="mr-6"
             />
           </div>
-        </form>
-      </div>
+          <div>
+            <Tooltip content={onlyReadTooltipContent}>
+              <Checkbox value="1" defaultSelected name="onlyRead">
+                Only Import Read Books
+              </Checkbox>
+            </Tooltip>
+          </div>
+          <SubmitFormAndStatus
+            isDisabled={!fileSelected}
+            error={uploadState.error}
+          />
+        </div>
+      </form>
     </div>
   )
 

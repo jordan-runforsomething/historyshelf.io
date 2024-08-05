@@ -54,6 +54,7 @@ export default async function goodreadsImportAction(
   }
   const userID = supabaseAuthResponse.data.user.id
   const file: File | null = formData.get("file") as File
+  const onlyRead = !!formData.get("onlyRead")
 
   // Validate File
   if (!file || file.type !== "text/csv") {
@@ -78,6 +79,12 @@ export default async function goodreadsImportAction(
     skip_empty_lines: true,
     trim: true,
   })
+  // If we only import read books, filter
+  console.log({ onlyRead, formData })
+  if (onlyRead) {
+    data = data.filter((d) => d["Exclusive Shelf"] === "read")
+  }
+
   // Clean up ISNBs to be numbers
   data = data.map((d) => {
     // Some ISBNs from Amazon are just 0; we need to make them null to satisfy unique constraint
