@@ -20,6 +20,7 @@
     "drizzle-orm": "^0.31.2",
     "framer-motion": "^11.2.12",
     "fs": "^0.0.1-security",
+    "langchain": "^0.2.12",
     "levenshtein-edit-distance": "^3.0.1",
     "lodash": "^4.17.21",
     "next": "14.2.4",
@@ -28,7 +29,8 @@
     "react-dom": "^18",
     "react-icons": "^5.2.1",
     "react-joyride": "^2.8.2",
-    "sass": "^1.77.6"
+    "sass": "^1.77.6",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",
