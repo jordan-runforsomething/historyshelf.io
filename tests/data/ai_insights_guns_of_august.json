@@ -1,0 +1,91 @@
+{
+  "nonfiction_history_book": true,
+  "start_date": "07/28/1914",
+  "end_date": "11/11/1918",
+  "insights": [
+    {
+      "date": "07/28/1914",
+      "name": "Assassination of Archduke Franz Ferdinand",
+      "description": "The assassination of Archduke Franz Ferdinand of Austria in Sarajevo, which triggered the outbreak of World War I.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/Assassination_of_Archduke_Franz_Ferdinand"
+    },
+    {
+      "date": "08/01/1914",
+      "name": "Germany declares war on Russia",
+      "description": "Germany declares war on Russia, marking a significant escalation in the conflict that would become World War I.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/Germany_declares_war_on_Russia"
+    },
+    {
+      "date": "08/03/1914",
+      "name": "Germany declares war on France",
+      "description": "Germany declares war on France, further expanding the conflict of World War I.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/Germany_declares_war_on_France"
+    },
+    {
+      "date": "08/04/1914",
+      "name": "Germany invades Belgium",
+      "description": "Germany invades Belgium as part of the Schlieffen Plan, leading to British involvement in the war.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/German_invasion_of_Belgium"
+    },
+    {
+      "date": "08/04/1914",
+      "name": "United Kingdom declares war on Germany",
+      "description": "The United Kingdom declares war on Germany in response to the invasion of Belgium.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/United_Kingdom_declares_war_on_Germany"
+    },
+    {
+      "date": "09/06/1914",
+      "name": "First Battle of the Marne",
+      "description": "A significant battle where the Allies halted the German advance into France, marking a turning point in the war.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/First_Battle_of_the_Marne"
+    },
+    {
+      "date": "04/22/1915",
+      "name": "Second Battle of Ypres",
+      "description": "The first major battle to use chemical weapons on the Western Front, marking a new phase in warfare.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/Second_Battle_of_Ypres"
+    },
+    {
+      "date": "07/01/1916",
+      "name": "Battle of the Somme",
+      "description": "One of the largest battles of World War I, known for its high casualties and the introduction of the tank.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/Battle_of_the_Somme"
+    },
+    {
+      "date": "11/18/1916",
+      "name": "Battle of the Somme ends",
+      "description": "The Battle of the Somme officially ends, with over a million men wounded or killed.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/Battle_of_the_Somme#Aftermath"
+    },
+    {
+      "date": "04/06/1917",
+      "name": "United States enters World War I",
+      "description": "The United States declares war on Germany, joining the Allies in the conflict.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/United_States_enters_World_War_I"
+    },
+    {
+      "date": "03/21/1918",
+      "name": "German Spring Offensive",
+      "description": "A series of German attacks along the Western Front, aiming to achieve a decisive victory before American forces could arrive in full strength.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/German_Spring_Offensive"
+    },
+    {
+      "date": "07/15/1918",
+      "name": "Second Battle of the Marne",
+      "description": "The last major German offensive of World War I, which was ultimately repelled by the Allies.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/Second_Battle_of_the_Marne"
+    },
+    {
+      "date": "09/26/1918",
+      "name": "Meuse-Argonne Offensive",
+      "description": "The largest American military operation in World War I, contributing to the eventual defeat of Germany.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/Meuse–Argonne_Offensive"
+    },
+    {
+      "date": "11/11/1918",
+      "name": "Armistice of Compiègne",
+      "description": "The armistice signed between the Allies and Germany, marking the end of fighting in World War I.",
+      "wikipedia_link": "https://en.wikipedia.org/wiki/Armistice_of_Compi%C3%A8gne"
+    }
+  ]
+}
