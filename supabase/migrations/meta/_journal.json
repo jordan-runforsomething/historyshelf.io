@@ -43,6 +43,13 @@
       "when": 1724643135814,
       "tag": "0005_cynical_rogue",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1725072867666,
+      "tag": "0006_little_peter_quill",
+      "breakpoints": true
     }
   ]
 }
