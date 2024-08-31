@@ -30,7 +30,16 @@ export async function ProcessBook(
       `Found ${insightCount[0].count} existing insights for ${book.title}`
     )
     if (insightCount[0].count < MIN_INSIGHTS) {
-      await ProcessBookInsights(book)
+      try {
+        await ProcessBookInsights(book)
+        await db
+          .update(books)
+          .set({ processed: new Date() })
+          .where(eq(books.id, book.id))
+      } catch (err) {
+        console.log(`Failed to process insights for ${book.title}`)
+        console.error(err)
+      }
     }
   }
 
@@ -45,15 +54,12 @@ export async function ProcessBook(
     }
   }
   if (processImage && !book.image_url) {
-    await DownloadBookImage(book)
-  }
-
-  // Set processed if we updated AI insights, since that's the hard part
-  if (processInsights) {
-    await db
-      .update(books)
-      .set({ processed: new Date() })
-      .where(eq(books.id, book.id))
+    try {
+      await DownloadBookImage(book)
+    } catch (err) {
+      console.log(`Failed to download image for ${book.title}`)
+      console.error(err)
+    }
   }
 
   return book

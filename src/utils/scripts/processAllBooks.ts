@@ -45,6 +45,8 @@ async function processAllBooks(count: number | undefined = undefined) {
   // const updatedBooks: SelectBook[] = _.filter(await Promise.all(promises))
   // console.log("Missing ISBN:", await missingISBNCount())
   // return updatedBooks
+  console.log("Script End: Process All Books")
+  return true
 }
 
-processAllBooks(2)
+processAllBooks(10)

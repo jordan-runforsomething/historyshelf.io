@@ -153,7 +153,11 @@ export async function ProcessBookInsights(book: SelectBook) {
     }
 
     console.log(`Inserting ${insertInsights.length} insights`)
-    console.debug(insertInsights)
+    // console.debug(insertInsights)
+
+    // If there are no insights, we just return True
+    if (insertInsights.length === 0) return true
+
     await db.insert(insights).values(insertInsights)
 
     // We also update book start and end
