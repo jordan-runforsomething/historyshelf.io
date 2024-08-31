@@ -142,17 +142,20 @@ export default async function goodreadsImportAction(
     bookForUserInsertResultCount: userBooksResult.length,
   })
 
+  // Used to process books immediately. Move to async process instead.
   // If there aren't three processed books, we process three books
-  if (_.filter(result, (r: SelectBook) => r.image_url).length < 3) {
-    // Process first three books that have an ISBN
-    const booksToUpdate = _.sampleSize(
-      _.filter(result, (r: SelectBook) => r.isbn),
-      3
-    )
-    const processPromises = booksToUpdate.map(ProcessBook)
-    const updatedBooks = await Promise.all(processPromises)
-    indicesToUpdate.map((i) => (result[i] = updatedBooks[i] || result[i]))
-  }
+  // if (_.filter(result, (r: SelectBook) => r.image_url).length < 3) {
+  //   // Process first three books that have an ISBN
+  //   const booksToUpdate: SelectBook[] = _.sampleSize(
+  //     _.filter(result, (r: SelectBook) => r.isbn),
+  //     3
+  //   )
+  //   const processPromises = booksToUpdate.map((b) =>
+  //     ProcessBook(b, false, true)
+  //   )
+  //   const updatedBooks = await Promise.all(processPromises)
+  //   indicesToUpdate.map((i) => (result[i] = updatedBooks[i] || result[i]))
+  // }
   return {
     books: _.sortBy(result, "image_url"),
     booksImported: result.length,

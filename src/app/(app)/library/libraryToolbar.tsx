@@ -43,7 +43,7 @@ export default function LibraryToolbar({
       <Divider orientation="vertical" />
       <Input
         className="w-96"
-        placeholder="Search..."
+        placeholder="Search your library..."
         value={search}
         onChange={handleChange}
       />

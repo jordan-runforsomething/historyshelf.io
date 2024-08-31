@@ -7,11 +7,10 @@
  * Use with command: npm run hs:processBooks
  */
 import { db } from "@/db"
-import { SelectBook, books } from "@/db/schema/books"
+import { books } from "@/db/schema/books"
 import { ProcessBook } from "@/utils/books/processBook"
 import { configDotenv } from "dotenv"
-import { eq, isNotNull, isNull, and, count, or } from "drizzle-orm"
-import _ from "lodash"
+import { and, count, isNull } from "drizzle-orm"
 console.log("Script Start: Process All Books")
 configDotenv({ path: `.env.${process.env.NODE_ENV}` })
 
@@ -23,17 +22,29 @@ const missingISBNCount = async () => {
   return result[0].count
 }
 
-async function processAllBooks() {
-  console.log("Missing ISBN:", await missingISBNCount())
-  const booksToUpdate = await db
+/**
+ * Process books by
+ * 1. Determien ISBN for those missing ISBN
+ * 2. Download image for those we don't have images of
+ * 3. Add insights for those we don't have at least minimum insights for
+ * @returns
+ */
+async function processAllBooks(count: number | undefined = undefined) {
+  let queryBooksToUpdate = db
     .select()
     .from(books)
-    .where(eq(books.id, "3aa5e332-d648-4b38-9768-b4d4601ffe1b"))
-  console.log(`Updating ${booksToUpdate.length} books`)
-  const promises = booksToUpdate.map(ProcessBook)
-  const updatedBooks: SelectBook[] = _.filter(await Promise.all(promises))
-  console.log("Missing ISBN:", await missingISBNCount())
-  return updatedBooks
+    .where(isNull(books.processed))
+    .$dynamic()
+  if (count) queryBooksToUpdate = queryBooksToUpdate.limit(count)
+  const booksToUpdate = await queryBooksToUpdate
+
+  console.log(`Found ${booksToUpdate.length} books to process`)
+
+  const promises = booksToUpdate.map((b) => ProcessBook(b))
+  const result = await Promise.all(promises)
+  // const updatedBooks: SelectBook[] = _.filter(await Promise.all(promises))
+  // console.log("Missing ISBN:", await missingISBNCount())
+  // return updatedBooks
 }
 
-processAllBooks()
+processAllBooks(2)
