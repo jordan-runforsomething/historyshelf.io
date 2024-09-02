@@ -26,6 +26,10 @@ export const books = pgTable("books", {
   // When we ran processing to extract events and download image
   // null if this hasn't happened yet
   processed: timestamp("processed"),
+
+  // Last time we attempted to get insights and failed to find new ones
+  insights_done: timestamp("insights_done"),
+  small_insights_done: timestamp("small_insights_done"),
 })
 export type InsertBook = typeof books.$inferInsert
 export type SelectBook = typeof books.$inferSelect

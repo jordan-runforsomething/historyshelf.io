@@ -46,14 +46,15 @@ export async function ProcessBook(
   if (!book.isbn && !book.isbn13) {
     console.log("Looking for ISBN", book.title)
     try {
-      book.isbn = await DetermineISBN(book)
+      book = await DetermineISBN(book)
+      if (!book.isbn) throw new Error("Failed to determine ISBN")
       console.log("Resulting ISBN: ", book.isbn)
     } catch (err) {
       console.log("Failed to determine ISBN")
       console.error(err)
     }
   }
-  if (processImage && !book.image_url) {
+  if ((book.isbn || book.isbn13) && processImage && !book.image_url) {
     try {
       await DownloadBookImage(book)
     } catch (err) {

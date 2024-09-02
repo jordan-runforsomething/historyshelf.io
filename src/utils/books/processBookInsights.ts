@@ -155,8 +155,14 @@ export async function ProcessBookInsights(book: SelectBook) {
     console.log(`Inserting ${insertInsights.length} insights`)
     // console.debug(insertInsights)
 
-    // If there are no insights, we just return True
-    if (insertInsights.length === 0) return true
+    // If there are no new insights, we are done (and return true)
+    if (insertInsights.length === 0) {
+      await db
+        .update(books)
+        .set({ insights_done: new Date() })
+        .where(eq(books.id, book.id))
+      return true
+    }
 
     await db.insert(insights).values(insertInsights)
 

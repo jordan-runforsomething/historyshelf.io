@@ -8,19 +8,12 @@
  */
 import { db } from "@/db"
 import { books } from "@/db/schema/books"
+import { insights } from "@/db/schema/insights"
 import { ProcessBook } from "@/utils/books/processBook"
 import { configDotenv } from "dotenv"
-import { and, count, isNull } from "drizzle-orm"
+import { and, count, isNull, eq } from "drizzle-orm"
 console.log("Script Start: Process All Books")
 configDotenv({ path: `.env.${process.env.NODE_ENV}` })
-
-const missingISBNCount = async () => {
-  const result = await db
-    .select({ count: count() })
-    .from(books)
-    .where(and(isNull(books.isbn), isNull(books.isbn13)))
-  return result[0].count
-}
 
 /**
  * Process books by
@@ -29,24 +22,29 @@ const missingISBNCount = async () => {
  * 3. Add insights for those we don't have at least minimum insights for
  * @returns
  */
-async function processAllBooks(count: number | undefined = undefined) {
+async function processAllBooks(bookCount: number | undefined = undefined) {
+  const start = new Date()
   let queryBooksToUpdate = db
     .select()
     .from(books)
     .where(isNull(books.processed))
     .$dynamic()
-  if (count) queryBooksToUpdate = queryBooksToUpdate.limit(count)
+  if (bookCount) queryBooksToUpdate = queryBooksToUpdate.limit(bookCount)
   const booksToUpdate = await queryBooksToUpdate
-
   console.log(`Found ${booksToUpdate.length} books to process`)
 
-  const promises = booksToUpdate.map((b) => ProcessBook(b))
+  // TEMPORARILY making not processing insights so we can better process image
+  const promises = booksToUpdate.map((b) => ProcessBook(b, false))
   const result = await Promise.all(promises)
   // const updatedBooks: SelectBook[] = _.filter(await Promise.all(promises))
   // console.log("Missing ISBN:", await missingISBNCount())
   // return updatedBooks
-  console.log("Script End: Process All Books")
+  const insightCount = await db.select({ count: count() }).from(insights)
+  const duration = (new Date().getTime() - start.getTime()) / 1000 // Seconds
+  console.log(
+    `Script End: Process All Books. Duration: ${duration}s. There are now ${insightCount[0].count} insights`
+  )
   return true
 }
 
-processAllBooks(10)
+processAllBooks(50)
