@@ -11,7 +11,7 @@ import { books } from "@/db/schema/books"
 import { insights } from "@/db/schema/insights"
 import { ProcessBook } from "@/utils/books/processBook"
 import { configDotenv } from "dotenv"
-import { and, count, isNull, eq } from "drizzle-orm"
+import { count, isNull } from "drizzle-orm"
 console.log("Script Start: Process All Books")
 configDotenv({ path: `.env.${process.env.NODE_ENV}` })
 

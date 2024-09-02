@@ -4,7 +4,8 @@ import LibraryToolbar from "@/app/(app)/library/libraryToolbar"
  * Component that displays a table of books
  */
 
-import { SelectBook } from "@/db/schema/books"
+import { FrontendBook, SelectBook } from "@/db/schema/books"
+import { getTimePeriodDisplay } from "@/lib/datetime"
 import {
   Table,
   TableHeader,
@@ -19,7 +20,7 @@ import Image from "next/image"
 import { useMemo, useState } from "react"
 
 export type BookTableProps = {
-  books: SelectBook[]
+  books: FrontendBook[]
 }
 
 const BASE_URL =
@@ -30,7 +31,6 @@ const COLS = [
   { name: "Title", uid: "title" },
   { name: "Author", uid: "author" },
   { name: "Time Period", uid: "time_period" },
-  { name: "Insights", uid: "insights" },
   { name: "Notes", uid: "notes" },
   { name: "Timeline", uid: "timeline" },
 ]
@@ -49,7 +49,7 @@ export default function BookTable({ books }: BookTableProps) {
     return false
   }
 
-  const renderBookImage = (book: SelectBook) => {
+  const renderBookImage = (book: FrontendBook) => {
     const imageExists = !!book.image_url
     let className = ""
     let src = ""
@@ -70,16 +70,17 @@ export default function BookTable({ books }: BookTableProps) {
     )
   }
 
-  const renderRow = (book: SelectBook) => (
+  const renderRow = (book: FrontendBook) => (
     <TableRow key={book.id}>
-      <TableCell>{renderBookImage(book)}</TableCell>
+      <TableCell className="p-1">{renderBookImage(book)}</TableCell>
       <TableCell>{book.title}</TableCell>
       <TableCell>{book.author}</TableCell>
       <TableCell>
-        {book.start_date?.toDateString()} - {book.end_date?.toDateString()}
+        {getTimePeriodDisplay(book.start_date ?? null, book.end_date ?? null)}
       </TableCell>
-      <TableCell>0</TableCell>
-      <TableCell>0</TableCell>
+      <TableCell>
+        {(book.note_count || 0) + (book.insight_count || 0)}
+      </TableCell>
       <TableCell>
         <i>timeline</i>
       </TableCell>

@@ -11,14 +11,12 @@ import { createClient } from "@/utils/supabase/server"
 import { parse } from "csv-parse/sync"
 import { sql } from "drizzle-orm"
 import _ from "lodash"
-import { ProcessBook } from "./processBook"
 
 /**
  * Server action. Takes in
  * @param previousState
  * @param formData
  */
-const IMPORT_BUCKET = "goodreads_import"
 
 const GOODREADS_NUMBER_FIELDS = [
   "Number of Pages",

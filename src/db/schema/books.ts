@@ -33,6 +33,10 @@ export const books = pgTable("books", {
 })
 export type InsertBook = typeof books.$inferInsert
 export type SelectBook = typeof books.$inferSelect
+export type FrontendBook = InsertBook & {
+  note_count?: number
+  insight_count?: number
+}
 
 // Pass through to relate books with users, track favorites
 export const bookForUser = pgTable(
