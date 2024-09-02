@@ -5,7 +5,27 @@ import { redirect } from "next/navigation"
 
 import { createClient } from "./server"
 
-export async function login(formData: FormData) {
+// Convert Supabase Error messages into user-readable messages
+// https://supabase.com/docs/reference/javascript/auth-error-codes
+const SIGNUP_ERROR_MESSAGES = {
+  email_exists:
+    "An account already exists with this email address. If this is your email, please login instead.",
+  email_not_confirmed:
+    "This email address is pending confirmation. Please click the link in the email we just sent you to get started",
+}
+
+export type HSAuthFormState = {
+  error?: string
+  message?: string
+}
+
+/**
+ * Given a Supabase user, get or create a HistoryShelf user
+ * TODO: Complete
+ */
+async function getOrCreateUser() {}
+
+export async function login(prevState: HSAuthFormState, formData: FormData) {
   const supabase = createClient()
 
   // type-casting here for convenience
@@ -19,14 +39,18 @@ export async function login(formData: FormData) {
 
   if (error) {
     console.log(error)
-    redirect("/error")
+    return {
+      error: error.code,
+      email: data.email,
+      message:
+        SIGNUP_ERROR_MESSAGES[error.code || ""] ?? "Invalid username/password",
+    }
   }
-
   revalidatePath("/", "layout")
-  redirect("/")
+  redirect("/hs/onboard/welcome/")
 }
 
-export async function signup(formData: FormData) {
+export async function signup(prevState: HSAuthFormState, formData: FormData) {
   const supabase = createClient()
 
   // type-casting here for convenience
@@ -37,15 +61,53 @@ export async function signup(formData: FormData) {
   }
 
   const response = await supabase.auth.signUp(data)
-  console.log(response)
-  console.log(JSON.stringify(response))
 
   if (response.error) {
     console.log({ data })
     console.log(response.error)
-    // redirect("/error")
+    let message = "An unexpected error occured, please try again"
+    if (response.error.message in SIGNUP_ERROR_MESSAGES) {
+      message = SIGNUP_ERROR_MESSAGES[response.error.message]
+    } else {
+      // TODO: Log error with Sentry; could be backend thing
+    }
+    return {
+      error: response.error.code,
+      message,
+    }
+  } else if (
+    response.data.user?.email === data.email &&
+    !response.data.user.identities?.length
+  ) {
+    // Attempting to register as a user who already exists and is confirmed
+    // For some reason Supabase does not return this as an error.
+    return {
+      message: SIGNUP_ERROR_MESSAGES.email_exists,
+      error: "email_exists",
+      email: data.email,
+    }
   }
 
   revalidatePath("/", "layout")
-  redirect("/")
+  return {
+    error: "email_not_confirmed",
+    email: data.email,
+    message:
+      "Welcome! Check your email for a confirmation link to get started!",
+  }
+}
+
+export async function uploadFile(file: File, bucket: string, filename = "") {
+  const supabase = createClient()
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .upload(filename || file.name, file)
+
+  // Handle error if upload failed
+  if (error) {
+    console.log("Supabase file upload error")
+    console.log({ error })
+    throw Error("Failed to upload file")
+  }
+  return data
 }

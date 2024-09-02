@@ -1,0 +1,33 @@
+.appLayout {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+
+    :global {
+        .app-layout-inner {
+            flex-grow: 1;
+            width: 75%;
+            align-self: stretch;
+        }
+    }
+
+    
+}
+
+.sidebarMenu {
+    padding-top: 24px;
+    :global {
+        .links {
+            a {
+                display: inline-block;
+                padding: 24px 12px;
+                border-bottom: solid 1px #ddd;
+                p {
+                    color: white;
+                    font-size: 1.25em;
+                }
+            }   
+        }
+    }
+    
+}

@@ -1,4 +1,4 @@
-import { createServerClient, type CookieOptions } from "@supabase/ssr"
+import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 
 export function createClient() {
@@ -20,4 +20,12 @@ export function createClient() {
       },
     }
   )
+}
+
+// Small helper that just gets the current user (for server-side)
+export async function getCurrentUser() {
+  const client = createClient()
+  const authResponse = await client.auth.getUser()
+  if (!authResponse.data.user) throw new Error("No user")
+  return authResponse.data.user
 }

@@ -1,5 +1,8 @@
-import HSLogin from "./login/login"
-import { createClient } from "@/utils/supabase/server"
+import { Button } from "@nextui-org/button"
+import HSLogin from "./auth/login"
+import styles from "./page.module.scss"
+import { createClient } from "@/utils/supabase/client"
+// import { createClient } from "@/utils/supabase/server"
 
 export default async function Home() {
   // Figure out if the user is logged in
@@ -7,13 +10,33 @@ export default async function Home() {
   const { data, error } = await supabase.auth.getUser()
   const authenticated = !!data?.user
 
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-24">
-      <h1>HistoryShelf.io</h1>
-      <p>Get started by signing in or creating an account:</p>
-      <p>Authenticated: {authenticated ? "true" : "false"}</p>
-      <p>{data?.user?.id}</p>
+  const loginForm = (
+    <>
+      <p className="mb-3">Create your free account to get started</p>
       <HSLogin />
+    </>
+  )
+  const alreadyLoggedIn = (
+    <>
+      <h2 className="text-lg">Welcome Back {data?.user?.email}!</h2>
+      <Button href="/hs">Open Dashboard</Button>
+    </>
+  )
+
+  return (
+    <main
+      className={`flex min-h-screen flex-row items-center justify-between p-12 ${styles.HSLanding}`}
+    >
+      <div className="product-description bg-paper p-6 rounded-sm w-2/5">
+        <h1>HistoryShelf.io</h1>
+        <p>
+          Read, Explore, and Share History with fellow geeks and history buffs
+        </p>
+      </div>
+
+      <div className="login-container bg-paper p-6 text-center rounded-sm w-2/5">
+        {authenticated ? alreadyLoggedIn : loginForm}
+      </div>
     </main>
   )
 }

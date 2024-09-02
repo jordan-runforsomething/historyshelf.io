@@ -1,0 +1,1 @@
+ALTER TABLE "books" ADD CONSTRAINT "books_amazon_id_unique" UNIQUE("amazon_id");
