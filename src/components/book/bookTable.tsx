@@ -7,17 +7,18 @@ import LibraryToolbar from "@/app/(app)/library/libraryToolbar"
 import { FrontendBook, SelectBook } from "@/db/schema/books"
 import { getTimePeriodDisplay } from "@/lib/datetime"
 import {
+  Chip,
   Table,
-  TableHeader,
-  TableColumn,
   TableBody,
-  TableRow,
   TableCell,
-  Skeleton,
+  TableColumn,
+  TableHeader,
+  TableRow,
 } from "@nextui-org/react"
 import _ from "lodash"
 import Image from "next/image"
 import { useMemo, useState } from "react"
+import { IconInsight, IconNote } from "../icons"
 
 export type BookTableProps = {
   books: FrontendBook[]
@@ -79,10 +80,17 @@ export default function BookTable({ books }: BookTableProps) {
         {getTimePeriodDisplay(book.start_date ?? null, book.end_date ?? null)}
       </TableCell>
       <TableCell>
-        {(book.note_count || 0) + (book.insight_count || 0)}
+        <div>
+          <Chip variant="light" startContent={<IconInsight />}>
+            {book.insight_count}
+          </Chip>
+          <Chip variant="light" startContent={<IconNote />}>
+            {book.note_count}
+          </Chip>
+        </div>
       </TableCell>
       <TableCell>
-        <i>timeline</i>
+        <i>timeline here</i>
       </TableCell>
     </TableRow>
   )
@@ -91,6 +99,7 @@ export default function BookTable({ books }: BookTableProps) {
     <section>
       <LibraryToolbar search={search} setSearch={setSearch} />
       <Table
+        isStriped
         isHeaderSticky
         classNames={{
           base: "max-h-[75vh] overflow-scroll",

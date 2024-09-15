@@ -3,8 +3,16 @@ import { bookForUser, books, FrontendBook } from "../schema/books"
 import { count, eq } from "drizzle-orm"
 import _ from "lodash"
 import { insights, notes } from "../schema/insights"
+import { getCurrentUser } from "@/utils/supabase/server"
 
-export async function getBooksForUser(userID: string): Promise<FrontendBook[]> {
+export async function getBooksForUser(
+  userID?: string
+): Promise<FrontendBook[]> {
+  if (!userID) {
+    const user = await getCurrentUser()
+    userID = user.id
+  }
+
   const result = await db
     .select({
       book: books,
