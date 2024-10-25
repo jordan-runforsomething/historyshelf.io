@@ -49,7 +49,7 @@ type ParsedInsightDate = {
   is_bc: boolean
 }
 
-const DATE_FORMATS = ["MM/dd/yyyy", "yyyy", "yyyy G"]
+const DATE_FORMATS = ["MM/dd/yyyy", "yyyy/dd/MM", "yyyy", "yyyy G"]
 
 /**
  * Parses a date string in multiple formats.
@@ -129,21 +129,27 @@ export async function ProcessBookInsights(book: SelectBook) {
     console.log(
       `Success. ${insightsResponse.insights.length} insights found for ${book.title}`
     )
-    let insertInsights: InsertInsight[] = insightsResponse.insights.map((i) => {
-      const insight: InsertInsight = {
-        name: i.name,
-        description: i.description,
-        wikipedia_link: i.wikipedia_link,
-        book_id: book.id,
-      }
-      let eventDate = parseDate(i.date)
-      if (eventDate.year !== null) {
-        insight.year = eventDate.year.toString()
-        insight.is_bc = eventDate.is_bc
-        insight.date = eventDate.date?.toISOString()
-      }
-      return insight
-    })
+
+    const missingDate = []
+    let insertInsights: InsertInsight[] = _.filter(
+      insightsResponse.insights.map((i) => {
+        const insight: InsertInsight = {
+          name: i.name,
+          description: i.description,
+          wikipedia_link: i.wikipedia_link,
+          book_id: book.id,
+        }
+        let eventDate = parseDate(i.date)
+        if (eventDate.year !== null) {
+          insight.year = eventDate.year.toString()
+          insight.is_bc = eventDate.is_bc
+          insight.date = eventDate.date?.toISOString()
+        }
+        if (!insight.year && !insight.date) {missingDate.push(insight)
+        else return insight
+      }),
+      (i) => !!i // Filter out the undefined insights
+    )
 
     // If we're adding new insights, we only include those we don't already ahve
     if (existingInsightWikipedias) {
